@@ -1,40 +1,46 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
+from django.urls import reverse
 # Create your models here.
 
 
-class Employee(models.Model):
+class User(AbstractUser):
     GENDER = (
         ('m', 'Male'),
         ('f', 'Female'),
         ('u', 'Undisclosed'),
     )
 
-    name = models.CharField(max_length=30)
-    email = models.EmailField(max_length=100, unique=True)
+    is_employee = models.BooleanField(default=False)
+    is_mentor = models.BooleanField(default=False)
     gender = models.CharField(max_length=1, choices=GENDER, default='u')
 
     def __str__(self):
-        return self.name
+        return self.username
+
+    def get_absolute_url(self):
+        return reverse("getUser", kwargs={"username": self.username})
+
+
+class Employee(models.Model):
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    projects = models.ManyToManyField('Project')
+
+    def __str__(self):
+        return self.user.username
 
 
 class Mentor(models.Model):
-    GENDER = (
-        ('m', 'Male'),
-        ('f', 'Female'),
-        ('u', 'Undisclosed'),
-    )
 
-    name = models.CharField(max_length=30)
-    email = models.EmailField(max_length=100, unique=True)
-    gender = models.CharField(max_length=1, choices=GENDER, default='u')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.user.username
 
 
 class Project(models.Model):
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=30, unique=True)
     description = models.TextField()
     manager = models.ForeignKey(
         Mentor, verbose_name="Project Manager", on_delete=models.CASCADE)
@@ -42,7 +48,5 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
-
-class Assign(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    def get_absolute_url(self):
+        return reverse("getproject", kwargs={"title": self.title})

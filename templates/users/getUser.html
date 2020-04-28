@@ -1,0 +1,19 @@
+{% extends '../base.html' %} {% block content %}
+<a href="{%url 'allUsers' %}">All Users</a>
+
+<p>Username : {{username}}</p>
+<p>Email : {{email}}</p>
+
+{% if is_employee %}
+
+<h3>Projects Assigned</h3>
+
+{% for project in projects_assigned %}
+<p><a href="{% url 'getProject' project.title %}">{{project.title}}</a></p>
+{% endfor %} {% endif %} {% if is_mentor %}
+
+<h3>Projects Mentoring</h3>
+
+{% for project in projects_mentoring %}
+<p><a href="{% url 'getProject' project.title %}">{{project.title}}</a></p>
+{% endfor %} {% endif %} {% endblock content %}

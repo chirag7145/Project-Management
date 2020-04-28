@@ -1,0 +1,18 @@
+{% extends '../base.html' %} {% block content %}
+<a href="{%url 'allProjects' %}">All Projects</a>
+
+<p>Title : {{title}}</p>
+<p>Description : {{description}}</p>
+<p>
+  Manager :
+  <a href="{%url 'getUser' manager %}">{{manager}}</a>
+</p>
+
+<h3>Users working under this project</h3>
+{% for employee in employees %}
+<p>
+  <a href="{% url 'getUser' employee.user.username %}"
+    >{{employee.user.username}}</a
+  >
+</p>
+{% endfor %} {% endblock content %}
